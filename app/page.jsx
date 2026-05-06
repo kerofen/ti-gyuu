@@ -245,6 +245,58 @@ const characterAssets = {
   blush: "/assets/characters/chi-gyu-blush.png"
 };
 
+const routes = [
+  {
+    id: "classic",
+    name: "チー牛くん",
+    routeTitle: "王道チーズ牛丼派",
+    catchCopy: "緊張しながらも、好きなものをまっすぐ話したい。",
+    curiosity: "おすすめトッピングを聞くと、一気に距離が縮まる。",
+    difficulty: "標準",
+    startAffection: START_AFFECTION,
+    cardImage: "/assets/routes/route-classic.png",
+    choiceBias: {
+      choice_food: { 0: 4, 2: 2 },
+      choice_anxiety: { 0: 3 },
+      choice_final: { 0: 3 }
+    }
+  },
+  {
+    id: "analyst",
+    name: "計算くん",
+    routeTitle: "メニュー研究派",
+    catchCopy: "値段、限定、組み合わせ。牛丼店のメニューに物語を見るタイプ。",
+    curiosity: "メニュー考察に乗るほど、隠れた照れが出る。",
+    difficulty: "会話重視",
+    startAffection: 10,
+    cardImage: "/assets/routes/route-analyst.png",
+    choiceBias: {
+      choice_food: { 1: 3 },
+      choice_hobby: { 0: 7, 1: 5 },
+      choice_memory: { 1: 3 },
+      choice_final: { 1: 4 }
+    }
+  },
+  {
+    id: "night",
+    name: "深夜くん",
+    routeTitle: "深夜イヤホン派",
+    catchCopy: "夜の窓際で、聞こえないふりをしながら本音を待っている。",
+    curiosity: "急かさず、不安に寄り添う返答が効きやすい。",
+    difficulty: "繊細",
+    startAffection: 14,
+    cardImage: "/assets/routes/route-night.png",
+    choiceBias: {
+      choice_anxiety: { 1: 6, 2: 4 },
+      choice_memory: { 2: 5 },
+      choice_final: { 1: 3, 2: 2 }
+    }
+  }
+];
+
+const routeMap = new Map(routes.map((route) => [route.id, route]));
+const DEFAULT_ROUTE_ID = routes[0].id;
+
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 function assetPath(path) {
@@ -295,6 +347,15 @@ function getEnding(affection, severeMistakes, timeouts) {
   return "bad";
 }
 
+function routeSpeaker(speaker, route) {
+  if (!speaker) return "";
+  return speaker === "チー牛くん" ? route.name : speaker;
+}
+
+function getRouteChoiceBonus(route, sceneId, choiceIndex) {
+  return route.choiceBias?.[sceneId]?.[choiceIndex] ?? 0;
+}
+
 function endingScene(type) {
   if (type === "good") {
     return {
@@ -326,6 +387,8 @@ function endingScene(type) {
 }
 
 export default function Home() {
+  const [screen, setScreen] = useState("title");
+  const [selectedRouteId, setSelectedRouteId] = useState(DEFAULT_ROUTE_ID);
   const [currentId, setCurrentId] = useState("opening");
   const [affection, setAffection] = useState(START_AFFECTION);
   const [expression, setExpression] = useState("neutral");
@@ -347,14 +410,18 @@ export default function Home() {
   const voiceRef = useRef(null);
   const endingSfxRef = useRef(null);
 
+  const selectedRoute = routeMap.get(selectedRouteId) ?? routes[0];
+  const selectedRouteName = selectedRoute.name;
   const currentScene = sceneMap.get(currentId);
   const dokiLevel = getDokiLevel(affection);
   const activeEnding = ending ? endingScene(ending) : null;
   const visibleScene = activeEnding ?? responseScene ?? currentScene;
-  const hasChoices = Boolean(!ending && !responseScene && currentScene?.choices?.length);
+  const hasChoices = Boolean(screen === "game" && !ending && !responseScene && currentScene?.choices?.length);
   const timerLimit = useMemo(() => getTimerLimit(dokiLevel), [dokiLevel]);
   const progressLabel = ending ? "0:21 / 0:21" : `0:${String(Math.min(history.length * 2 + 3, 21)).padStart(2, "0")} / 0:21`;
-  const showCharacter = currentId !== "opening" || Boolean(responseScene) || Boolean(ending);
+  const showCharacter = screen === "game";
+  const visibleSpeaker = routeSpeaker(visibleScene?.speaker, selectedRoute);
+  const characterSource = selectedRoute.cardImage ?? characterAssets[expression] ?? characterAssets.neutral;
 
   const playSfx = useCallback(
     (key, volume = 0.72) => {
@@ -411,6 +478,49 @@ export default function Home() {
     setMuted(false);
   }, []);
 
+  const resetRun = useCallback((route) => {
+    setCurrentId("opening");
+    setAffection(route.startAffection);
+    setExpression("neutral");
+    setSevereMistakes(0);
+    setTimeouts(0);
+    setHistory([]);
+    setLastFeedback(null);
+    setResponseScene(null);
+    setEnding(null);
+    setShowLog(false);
+    setShowMenu(false);
+    setAutoMode(false);
+    setRemaining(18);
+    endingSfxRef.current = null;
+  }, []);
+
+  const startTitle = useCallback(() => {
+    enableAudio();
+    setScreen("route");
+  }, [enableAudio]);
+
+  const startRoute = useCallback(
+    (routeId) => {
+      const nextRoute = routeMap.get(routeId) ?? routes[0];
+      setSelectedRouteId(nextRoute.id);
+      resetRun(nextRoute);
+      setScreen("game");
+      playSfx("choiceSelect", 0.5);
+    },
+    [playSfx, resetRun]
+  );
+
+  const returnToRoutes = useCallback(() => {
+    setScreen("route");
+    setShowLog(false);
+    setShowMenu(false);
+    setAutoMode(false);
+    setResponseScene(null);
+    setEnding(null);
+    playSfx("uiClick", 0.42);
+  }, [playSfx]);
+
   const pushHistory = useCallback((speaker, text) => {
     setHistory((items) => [...items, { speaker, text }].slice(-40));
   }, []);
@@ -429,17 +539,19 @@ export default function Home() {
 
   const endGame = useCallback(
     (forcedType) => {
+      const activeRoute = routeMap.get(selectedRouteId) ?? routes[0];
       const result = forcedType ?? getEnding(affection, severeMistakes, timeouts);
       const scene = endingScene(result);
       setEnding(result);
       setExpression(scene.expression);
-      pushHistory(scene.speaker, scene.text);
+      pushHistory(routeSpeaker(scene.speaker, activeRoute), scene.text);
     },
-    [affection, pushHistory, severeMistakes, timeouts]
+    [affection, pushHistory, selectedRouteId, severeMistakes, timeouts]
   );
 
   const advance = useCallback(() => {
-    if (showLog || showMenu || hasChoices || ending) return;
+    if (screen !== "game" || showLog || showMenu || hasChoices || ending) return;
+    const activeRoute = routeMap.get(selectedRouteId) ?? routes[0];
     playSfx("uiClick", 0.42);
     if (responseScene) {
       const nextId = responseScene.nextId;
@@ -457,7 +569,7 @@ export default function Home() {
 
     if (!currentScene) return;
 
-    pushHistory(currentScene.speaker, currentScene.text);
+    pushHistory(routeSpeaker(currentScene.speaker, activeRoute), currentScene.text);
 
     if (currentScene.next === "ending_check") {
       endGame();
@@ -466,32 +578,36 @@ export default function Home() {
 
     goToScene(currentScene.next);
     setLastFeedback(null);
-  }, [currentScene, endGame, ending, goToScene, hasChoices, playSfx, pushHistory, responseScene, showLog, showMenu]);
+  }, [currentScene, endGame, ending, goToScene, hasChoices, playSfx, pushHistory, responseScene, screen, selectedRouteId, showLog, showMenu]);
 
   const choose = useCallback(
     (choice, index) => {
-      if (!currentScene || !hasChoices || ending) return;
+      if (screen !== "game" || !currentScene || !hasChoices || ending) return;
 
-      const newAffection = clamp(affection + choice.delta, 0, MAX_AFFECTION);
+      const activeRoute = routeMap.get(selectedRouteId) ?? routes[0];
+      const routeBonus = getRouteChoiceBonus(activeRoute, currentScene.id, index);
+      const totalDelta = choice.delta + routeBonus;
+      const newAffection = clamp(affection + totalDelta, 0, MAX_AFFECTION);
       const newSevere = severeMistakes + (choice.severe ? 1 : 0);
       const feedback = {
         index: index + 1,
-        delta: choice.delta,
+        delta: totalDelta,
+        routeBonus,
         text: choice.response
       };
 
       playSfx("choiceSelect", 0.58);
-      window.setTimeout(() => playSfx(choice.delta >= 0 ? "affectionUp" : "affectionDown", 0.66), 120);
-      if (choice.delta >= 18) {
+      window.setTimeout(() => playSfx(totalDelta >= 0 ? "affectionUp" : "affectionDown", 0.66), 120);
+      if (totalDelta >= 18) {
         window.setTimeout(() => playSfx("maleHappy", 0.68), 320);
       }
-      if (choice.severe || choice.delta <= -20) {
+      if (choice.severe || totalDelta <= -20) {
         window.setTimeout(() => playSfx("maleDespair", 0.74), 320);
       }
 
-      pushHistory(currentScene.speaker, currentScene.text);
+      pushHistory(routeSpeaker(currentScene.speaker, activeRoute), currentScene.text);
       pushHistory("私", choice.label);
-      pushHistory("チー牛くん", choice.response);
+      pushHistory(activeRoute.name, choice.response);
       setAffection(newAffection);
       setSevereMistakes(newSevere);
       setExpression(choice.mood);
@@ -512,26 +628,15 @@ export default function Home() {
               : null
       });
     },
-    [affection, currentScene, ending, hasChoices, playSfx, pushHistory, severeMistakes, timeouts]
+    [affection, currentScene, ending, hasChoices, playSfx, pushHistory, screen, selectedRouteId, severeMistakes, timeouts]
   );
 
   const restart = useCallback(() => {
-    setCurrentId("opening");
-    setAffection(START_AFFECTION);
-    setExpression("neutral");
-    setSevereMistakes(0);
-    setTimeouts(0);
-    setHistory([]);
-    setLastFeedback(null);
-    setResponseScene(null);
-    setEnding(null);
-    setShowLog(false);
-    setShowMenu(false);
-    setAutoMode(false);
-    setRemaining(18);
-    endingSfxRef.current = null;
+    const activeRoute = routeMap.get(selectedRouteId) ?? routes[0];
+    resetRun(activeRoute);
+    setScreen("game");
     playSfx("uiClick", 0.42);
-  }, [playSfx]);
+  }, [playSfx, resetRun, selectedRouteId]);
 
   useEffect(() => {
     if (!hasChoices || ending || showLog || showMenu) {
@@ -550,7 +655,7 @@ export default function Home() {
           setExpression("sad");
           playSfx("timeout", 0.7);
           pushHistory("私", "……。");
-          pushHistory("チー牛くん", "ご、ごめん。困らせたよね。");
+          pushHistory(selectedRouteName, "ご、ごめん。困らせたよね。");
           setResponseScene({
             speaker: "チー牛くん",
             expression: "sad",
@@ -572,7 +677,7 @@ export default function Home() {
     }, 1000);
 
     return () => window.clearInterval(timerRef.current);
-  }, [affection, currentScene, ending, hasChoices, playSfx, pushHistory, severeMistakes, showLog, showMenu, timerLimit, timeouts]);
+  }, [affection, currentScene, ending, hasChoices, playSfx, pushHistory, selectedRouteName, severeMistakes, showLog, showMenu, timerLimit, timeouts]);
 
   useEffect(() => {
     if (!autoMode || hasChoices || ending || showLog || showMenu) return;
@@ -586,8 +691,9 @@ export default function Home() {
   }, [ending, expression, playBgm]);
 
   useEffect(() => {
+    if (screen !== "game") return;
     playVoice(visibleScene?.voice);
-  }, [playVoice, visibleScene?.voice]);
+  }, [playVoice, screen, visibleScene?.voice]);
 
   useEffect(() => {
     if (!ending || endingSfxRef.current === ending) return;
@@ -616,6 +722,27 @@ export default function Home() {
 
   useEffect(() => {
     const onKeyDown = (event) => {
+      const numeric = Number(event.key);
+
+      if (screen === "title") {
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          startTitle();
+        }
+        return;
+      }
+
+      if (screen === "route") {
+        if (event.key === "Escape") {
+          setScreen("title");
+          return;
+        }
+        if (numeric >= 1 && numeric <= routes.length) {
+          startRoute(routes[numeric - 1].id);
+        }
+        return;
+      }
+
       if (event.key === "Escape") {
         setShowLog(false);
         setShowMenu(false);
@@ -626,7 +753,6 @@ export default function Home() {
         event.preventDefault();
         advance();
       }
-      const numeric = Number(event.key);
       if (hasChoices && numeric >= 1 && numeric <= 4) {
         const choice = currentScene.choices[numeric - 1];
         if (choice) choose(choice, numeric - 1);
@@ -635,7 +761,7 @@ export default function Home() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [advance, choose, currentScene, hasChoices]);
+  }, [advance, choose, currentScene, hasChoices, screen, startRoute, startTitle]);
 
   const timerPercent = hasChoices ? `${(remaining / timerLimit) * 100}%` : "100%";
   const affectionPercent = `${affection}%`;
@@ -651,11 +777,19 @@ export default function Home() {
           }}
         />
 
+        {screen === "title" ? <TitleScreen onStart={startTitle} /> : null}
+
+        {screen === "route" ? (
+          <RouteSelect routes={routes} selectedRouteId={selectedRouteId} onSelect={startRoute} onBack={() => setScreen("title")} />
+        ) : null}
+
+        {screen === "game" ? (
+          <>
         {showCharacter ? (
-          <div className={`character character-${expression}`} aria-hidden="true">
+          <div className={`character character-${expression} route-portrait-character route-${selectedRoute.id}`} aria-hidden="true">
             <Image
               className="character-image"
-              src={assetPath(characterAssets[expression] ?? characterAssets.neutral)}
+              src={assetPath(characterSource)}
               alt=""
               fill
               priority
@@ -684,16 +818,23 @@ export default function Home() {
           <small>ドキドキLv.{dokiLevel}</small>
         </div>
 
+        <div className="route-badge">
+          <span>攻略中</span>
+          <strong>{selectedRoute.name}</strong>
+          <small>{selectedRoute.routeTitle}</small>
+        </div>
+
         {lastFeedback && !ending ? (
           <div className={`feedback ${lastFeedback.delta >= 0 ? "plus" : "minus"}`}>
             {lastFeedback.index ? `選択 ${lastFeedback.index}` : "時間切れ"} / 親密度
             {lastFeedback.delta >= 0 ? "+" : ""}
             {lastFeedback.delta}
+            {lastFeedback.routeBonus > 0 ? ` / 相性+${lastFeedback.routeBonus}` : ""}
           </div>
         ) : null}
 
         <button className={`dialog-box ${hasChoices ? "dialog-with-choices" : ""}`} type="button" onClick={advance}>
-          <span className="speaker-label">{visibleScene?.speaker}</span>
+          <span className="speaker-label">{visibleSpeaker}</span>
           <span className="dialog-text">
             {activeEnding?.title ? <em>{activeEnding.title}</em> : null}
             {visibleScene?.text}
@@ -706,18 +847,28 @@ export default function Home() {
             <div className="choice-timer">
               <i style={{ width: timerPercent }} />
             </div>
-            {currentScene.choices.map((choice, index) => (
-              <button className={`choice choice-${index + 1}`} key={choice.label} type="button" onClick={() => choose(choice, index)}>
-                <span className={`choice-number n${index + 1}`} data-number={index + 1} />
-                <span>{choice.label}</span>
-              </button>
-            ))}
+            {currentScene.choices.map((choice, index) => {
+              const routeBonus = getRouteChoiceBonus(selectedRoute, currentScene.id, index);
+              return (
+                <button
+                  className={`choice choice-${index + 1} ${routeBonus > 0 ? "choice-affinity" : ""}`}
+                  key={choice.label}
+                  type="button"
+                  onClick={() => choose(choice, index)}
+                >
+                  <span className={`choice-number n${index + 1}`} data-number={index + 1} />
+                  <span>{choice.label}</span>
+                  {routeBonus > 0 ? <small>相性 +{routeBonus}</small> : null}
+                </button>
+              );
+            })}
           </div>
         ) : null}
 
         {ending ? (
           <div className="ending-actions">
             <button type="button" onClick={restart}>もう一度はじめる</button>
+            <button type="button" onClick={returnToRoutes}>ルート選択へ</button>
           </div>
         ) : null}
 
@@ -731,12 +882,6 @@ export default function Home() {
           <span />
           <b>{progressLabel}</b>
         </div>
-
-        {!audioEnabled ? (
-          <div className="audio-gate">
-            <button type="button" onClick={enableAudio}>はじめる</button>
-          </div>
-        ) : null}
 
         {showLog ? (
           <Overlay title="LOG" onClose={() => setShowLog(false)}>
@@ -759,14 +904,92 @@ export default function Home() {
           <Overlay title="MENU" onClose={() => setShowMenu(false)}>
             <div className="menu-actions">
               <button type="button" onClick={restart}>最初から</button>
+              <button type="button" onClick={returnToRoutes}>ルート選択</button>
               <button type="button" onClick={() => setMuted((value) => !value)}>{muted ? "音を出す" : "音を切る"}</button>
               <button type="button" onClick={() => setShowMenu(false)}>ゲームに戻る</button>
             </div>
             <p>Space / Enterで会話送り、1-4で選択、Lでログ、Aでオート切り替え。</p>
           </Overlay>
         ) : null}
+          </>
+        ) : null}
       </section>
     </main>
+  );
+}
+
+function TitleScreen({ onStart }) {
+  return (
+    <div className="title-screen">
+      <Image
+        className="title-key-image"
+        src={assetPath("/assets/routes/title-key-visual.png")}
+        alt=""
+        fill
+        priority
+        unoptimized
+        sizes="100vw"
+      />
+      <div className="title-copy">
+        <span className="title-kicker">5分で終わる牛丼店恋愛シミュレーション</span>
+        <h1>チー牛くん恋愛研究所</h1>
+        <p>どの席に座るかで、会話の温度が少し変わる。</p>
+        <button type="button" onClick={onStart}>ゲームスタート</button>
+      </div>
+    </div>
+  );
+}
+
+function RouteSelect({ routes, selectedRouteId, onSelect, onBack }) {
+  return (
+    <div className="route-screen">
+      <Image
+        className="route-bg-image"
+        src={assetPath("/assets/routes/title-key-visual.png")}
+        alt=""
+        fill
+        unoptimized
+        sizes="100vw"
+      />
+      <div className="route-header">
+        <button className="route-back" type="button" onClick={onBack}>戻る</button>
+        <div>
+          <span>Route Select</span>
+          <h2>攻略するチー牛くんを選ぶ</h2>
+        </div>
+      </div>
+
+      <div className="route-grid">
+        {routes.map((route, index) => (
+          <button
+            className={`route-card ${selectedRouteId === route.id ? "selected" : ""}`}
+            key={route.id}
+            type="button"
+            onClick={() => onSelect(route.id)}
+          >
+            <span className="route-index">Route {index + 1}</span>
+            <span className="route-image-wrap">
+              <Image
+                className="route-image"
+                src={assetPath(route.cardImage)}
+                alt=""
+                fill
+                priority={index === 0}
+                unoptimized
+                sizes="(max-width: 780px) 86vw, 26vw"
+              />
+            </span>
+            <span className="route-card-body">
+              <strong>{route.name}</strong>
+              <em>{route.routeTitle}</em>
+              <span>{route.catchCopy}</span>
+              <small>{route.curiosity}</small>
+              <b>難易度: {route.difficulty}</b>
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 

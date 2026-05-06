@@ -8,7 +8,7 @@
 - Reference mood: 添付デモ画面のような実写風背景、左上の日時パネル、右上の親密度ゲージ、下部の大きな会話ウィンドウ、4択選択肢。
 - Avoid: 実在店舗ロゴ、実在人物写真、第三者素材の直接コピー。画面構成と遊び心は再現しつつ、素材は架空・オリジナルにする。
 - Must-have for first prototype: 会話送り、選択肢、親密度変化、ドキドキLv、制限時間、成功/失敗エンディング、リスタート。
-- Not in first prototype: 音声、セーブ、外部ランキング、複数キャラクター、長編分岐。
+- Not in first prototype: セーブ、外部ランキング、長編分岐。
 
 ## Game Purpose
 プレイヤーは主人公として、牛丼店で緊張しているチー牛くんの本音を引き出し、5分程度の短い会話の中で親密度を70%以上まで上げる。単に好感度を稼ぐのではなく、相手の不安を見抜いて、場面ごとに自然な返答を選ぶことが目的。
@@ -24,12 +24,15 @@
 - Mobile: 画面下部の選択肢と右下ボタンをタップする。
 
 ## Main Loop
-1. 会話テキストを読む。
-2. 重要場面で4択から返答を選ぶ。
-3. 選択結果で親密度、ドキドキLv、チー牛くんの表情、会話ログが更新される。
-4. ドキドキLvが上がるほど選択制限時間が短くなり、曖昧な返答のペナルティが増える。
-5. 最終シーンで親密度と失敗フラグを判定し、成功/通常/失敗エンディングへ進む。
-6. リスタートで同じ5分ループを再挑戦する。
+1. タイトル画面でゲームを開始する。
+2. 3人の攻略ルートから、会話したいチー牛くんを選ぶ。
+3. 会話テキストを読む。
+4. 重要場面で4択から返答を選ぶ。
+5. 選択結果で親密度、ドキドキLv、チー牛くんの表情、会話ログが更新される。
+6. ルートごとの好みと弱点により、一部選択肢の親密度変化が補正される。
+7. ドキドキLvが上がるほど選択制限時間が短くなり、曖昧な返答のペナルティが増える。
+8. 最終シーンで親密度と失敗フラグを判定し、成功/通常/失敗エンディングへ進む。
+9. リスタートで同じルートを再挑戦、またはルート選択へ戻る。
 
 ## Win Condition
 - 最終シーン到達時に親密度が70%以上。
@@ -49,6 +52,8 @@
 - ドキドキLvは親密度が上がるほど上昇し、Lv2以降は会話送り後の選択タイマーが速く減る。
 
 ## Screen Layout
+- Title Screen: 3人の候補が見えるキービジュアル、ゲームタイトル、開始ボタン。
+- Route Select: 3枚の攻略カード。名前、性格、会話の入り口、攻略ヒントを表示する。
 - 16:9のゲームステージを中央に表示。
 - Background: 架空の牛丼店内。カウンター、メニュー札、オレンジ看板を含む実写デモ風の背景。
 - Character layer: チー牛くんの半身立ち絵。通常、困惑、照れ、落胆、怒りの表情差分。
@@ -60,6 +65,8 @@
 - Overlay: ログ、メニュー、エンディング結果、リスタート。
 
 ## Required Assets
+- Title key visual for the opening screen.
+- Three route-select portrait cards: classic nervous route, analytical menu researcher route, quiet late-night route.
 - Original gyudon-shop background asset, SVG/CSS based for prototype.
 - Original character portrait asset with expression variants, SVG/CSS based for prototype.
 - UI assets: heart icon, numbered diamonds, HUD panels, dialog frame, control icons.
@@ -80,16 +87,18 @@
 ## Implementation Order
 1. Create project rules (`AGENTS.md`) and this `PLAN.md`.
 2. Scaffold minimal Next.js app with package scripts.
-3. Build the single-screen visual novel shell: stage, background, character, HUD, dialog, control buttons.
-4. Add scenario data with 5 choice beats and ending nodes.
-5. Implement main loop: text advance, choice handling, stat changes, timer, auto mode, log.
-6. Implement win/fail/restart states.
-7. Add responsive desktop/mobile layout.
-8. Run lint/build, start local server, verify gameplay in browser.
-9. Log implementation notes under `.logs/`.
+3. Build the title screen and route-select entry flow.
+4. Build the single-screen visual novel shell: stage, background, character, HUD, dialog, control buttons.
+5. Add scenario data with 5 choice beats and ending nodes.
+6. Implement main loop: text advance, choice handling, stat changes, timer, auto mode, log.
+7. Implement win/fail/restart states.
+8. Add responsive desktop/mobile layout.
+9. Run lint/build, start local server, verify gameplay in browser.
+10. Log implementation notes under `.logs/`.
 
 ## First Playable Milestone
 - One route lasting several minutes when read normally.
+- Title screen and three-route selection before the scenario.
 - Five choice moments.
 - Three endings: 成功、通常、失敗。
 - All controls clickable; keyboard shortcuts for advance and choice selection.
