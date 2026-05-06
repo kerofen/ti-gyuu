@@ -60,3 +60,10 @@ Sliced UI assets:
 - `ui/cursor-hand-tap-pink.png`
 - `ui/cursor-hand-circle.png`
 - `ui/cursor-hand-tap-yellow.png`
+
+## Audio
+
+- `audio/bgm/normal.mp3` - user-provided normal BGM.
+- `audio/bgm/sad.mp3` - user-provided sad-state BGM.
+- `audio/voice/` - ElevenLabs-generated dialogue and male reaction voices.
+- `audio/sfx/` - ElevenLabs-generated UI, affection, timeout, and ending sound effects.

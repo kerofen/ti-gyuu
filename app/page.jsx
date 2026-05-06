@@ -11,6 +11,7 @@ const scenes = [
     id: "opening",
     speaker: "私",
     expression: "neutral",
+    voice: "opening",
     text: "5月24日、土曜日。秋葉原の牛丼店で、私はいつものカウンター席に座っていた。",
     next: "meet"
   },
@@ -18,6 +19,7 @@ const scenes = [
     id: "meet",
     speaker: "チー牛くん",
     expression: "shy",
+    voice: "meet",
     text: "ぼ、ぼぼぼくと、ち、ちょっとだけ話してくれないかな。チーズ牛丼、好きって聞こえたから……。",
     next: "choice_food"
   },
@@ -25,24 +27,28 @@ const scenes = [
     id: "choice_food",
     speaker: "チー牛くん",
     expression: "shy",
+    voice: "choice-food",
     text: "あ、あの……チーズ牛丼って、やっぱり変かな？",
     choices: [
       {
         label: "うん、私も好き。おすすめ聞かせて",
         delta: 18,
         mood: "blush",
+        voice: "response-food-1",
         response: "ほんと？ えへへ……じゃ、じゃあ温玉を乗せると、すごく幸せなんだ。"
       },
       {
         label: "別に普通じゃない？",
         delta: 4,
         mood: "neutral",
+        voice: "response-food-2",
         response: "そ、そうだよね。普通……だよね。"
       },
       {
         label: "急にどうしたの？大丈夫？",
         delta: 10,
         mood: "shy",
+        voice: "response-food-3",
         response: "ご、ごめん。ちょっと緊張して、確認したくなっただけ。"
       },
       {
@@ -50,6 +56,7 @@ const scenes = [
         delta: -12,
         mood: "sad",
         severe: true,
+        voice: "response-food-4",
         response: "そっか……やっぱり重いよね、ぼくも。"
       }
     ],
@@ -59,6 +66,7 @@ const scenes = [
     id: "after_food",
     speaker: "私",
     expression: "neutral",
+    voice: "after-food",
     text: "彼はメニュー表を両手で持ったまま、ちらちらとこちらの反応を見ている。",
     next: "choice_hobby"
   },
@@ -66,24 +74,28 @@ const scenes = [
     id: "choice_hobby",
     speaker: "チー牛くん",
     expression: "neutral",
+    voice: "choice-hobby",
     text: "ぼ、僕、こういうお店のメニューを眺めるのが好きで……へ、変だよね。",
     choices: [
       {
         label: "値段や組み合わせを見るの楽しいよね",
         delta: 17,
         mood: "blush",
+        voice: "response-hobby-1",
         response: "そ、そう！ 限定メニューの流れとか、見てるだけで物語があるんだ。"
       },
       {
         label: "詳しいんだね。今のおすすめは？",
         delta: 13,
         mood: "shy",
+        voice: "response-hobby-2",
         response: "おすすめ……！ えっと、今日はチーズにねぎ玉が強いと思う。"
       },
       {
         label: "まあ、暇つぶしにはなるよね",
         delta: -4,
         mood: "sad",
+        voice: "response-hobby-3",
         response: "ひ、暇つぶし……うん、そういう感じでもあるかも。"
       },
       {
@@ -91,6 +103,7 @@ const scenes = [
         delta: -15,
         mood: "sad",
         severe: true,
+        voice: "response-hobby-4",
         response: "ご、ごめん。話すの、遅いよね。"
       }
     ],
@@ -100,24 +113,28 @@ const scenes = [
     id: "choice_anxiety",
     speaker: "チー牛くん",
     expression: "sad",
+    voice: "choice-anxiety",
     text: "い、いやだったかな……。ぼ、僕なんかと話してて楽しくなかったよね……。",
     choices: [
       {
         label: "そんなことないよ。私は楽しい",
         delta: 20,
         mood: "blush",
+        voice: "response-anxiety-1",
         response: "……う、嬉しい。ちゃんと目を見て言ってくれるの、助かる。"
       },
       {
         label: "不安なら、少しずつ話そう",
         delta: 15,
         mood: "shy",
+        voice: "response-anxiety-2",
         response: "少しずつ……それなら、ぼくにもできるかも。"
       },
       {
         label: "悲しいこと言わないで。大丈夫だよ",
         delta: 9,
         mood: "neutral",
+        voice: "response-anxiety-3",
         response: "うん……ありがとう。言い方、困らせちゃったね。"
       },
       {
@@ -125,6 +142,7 @@ const scenes = [
         delta: -24,
         mood: "angry",
         severe: true,
+        voice: "response-anxiety-4",
         response: "嘘だ！ 絶対そんなこと思ってない！ もういい、帰る！"
       }
     ],
@@ -134,6 +152,7 @@ const scenes = [
     id: "midpoint",
     speaker: "私",
     expression: "neutral",
+    voice: "midpoint",
     text: "券売機の音、湯気、オレンジ色の看板。短い会話なのに、店内の時間が少しゆっくり流れた。",
     next: "choice_memory"
   },
@@ -141,24 +160,28 @@ const scenes = [
     id: "choice_memory",
     speaker: "チー牛くん",
     expression: "shy",
+    voice: "choice-memory",
     text: "じ、実は今日、誰かと食べる練習をしようと思って来たんだ。",
     choices: [
       {
         label: "練習じゃなくて、もうちゃんと会話だよ",
         delta: 18,
         mood: "blush",
+        voice: "response-memory-1",
         response: "そっか……ぼく、今ちゃんと会話できてるんだ。"
       },
       {
         label: "その勇気、すごくいいと思う",
         delta: 16,
         mood: "blush",
+        voice: "response-memory-2",
         response: "勇気……そんなふうに言われたの、初めてかも。"
       },
       {
         label: "次はもっと混んでない店にしよっか",
         delta: 8,
         mood: "neutral",
+        voice: "response-memory-3",
         response: "あ、うん。静かなところなら、もっと話せる気がする。"
       },
       {
@@ -166,6 +189,7 @@ const scenes = [
         delta: -22,
         mood: "sad",
         severe: true,
+        voice: "response-memory-4",
         response: "ち、違う！ そんなつもりじゃ……ごめん。"
       }
     ],
@@ -175,24 +199,28 @@ const scenes = [
     id: "choice_final",
     speaker: "チー牛くん",
     expression: "blush",
+    voice: "choice-final",
     text: "も、もし迷惑じゃなければ……また一緒に、チーズ牛丼食べてくれる？",
     choices: [
       {
         label: "もちろん。次は私から誘うね",
         delta: 24,
         mood: "blush",
+        voice: "response-final-1",
         response: "えっ……次があるんだ。ぼく、今日のこと忘れない。"
       },
       {
         label: "うん。おすすめトッピングも教えて",
         delta: 18,
         mood: "blush",
+        voice: "response-final-2",
         response: "任せて。次までに、完璧な組み合わせを考えておく。"
       },
       {
         label: "予定が合えばね",
         delta: -6,
         mood: "sad",
+        voice: "response-final-3",
         response: "そ、そうだよね。無理にとは言わないよ。"
       },
       {
@@ -200,6 +228,7 @@ const scenes = [
         delta: -30,
         mood: "angry",
         severe: true,
+        voice: "response-final-4",
         response: "……わかった。優しくされたって、勝手に勘違いしただけだよね。"
       }
     ],
@@ -220,6 +249,27 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 function assetPath(path) {
   return `${basePath}${path}`;
+}
+
+const bgmAssets = {
+  normal: "/assets/audio/bgm/normal.mp3",
+  sad: "/assets/audio/bgm/sad.mp3"
+};
+
+const sfxAssets = {
+  uiClick: "/assets/audio/sfx/ui-click.mp3",
+  choiceSelect: "/assets/audio/sfx/choice-select.mp3",
+  affectionUp: "/assets/audio/sfx/affection-up.mp3",
+  affectionDown: "/assets/audio/sfx/affection-down.mp3",
+  timeout: "/assets/audio/sfx/timeout.mp3",
+  successSting: "/assets/audio/sfx/success-sting.mp3",
+  badSting: "/assets/audio/sfx/bad-sting.mp3",
+  maleHappy: "/assets/audio/voice/male-happy.mp3",
+  maleDespair: "/assets/audio/voice/male-despair.mp3"
+};
+
+function voicePath(voiceId) {
+  return `/assets/audio/voice/${voiceId}.mp3`;
 }
 
 function clamp(value, min, max) {
@@ -251,6 +301,7 @@ function endingScene(type) {
       speaker: "チー牛くん",
       expression: "blush",
       title: "成功エンド",
+      voice: "ending-good",
       text: "ありがとう。次は、ぼくがちゃんと誘う。君と食べるチーズ牛丼、きっと一番おいしいから。"
     };
   }
@@ -260,6 +311,7 @@ function endingScene(type) {
       speaker: "チー牛くん",
       expression: "neutral",
       title: "通常エンド",
+      voice: "ending-normal",
       text: "今日はありがとう。まだ少し緊張するけど、また会えたら……その時は、もう少し話せると思う。"
     };
   }
@@ -268,6 +320,7 @@ function endingScene(type) {
     speaker: "チー牛くん",
     expression: "angry",
     title: "失敗エンド",
+    voice: "ending-bad",
     text: "嘘だ！ 絶対そんなこと思ってない！ もういい、帰る！"
   };
 }
@@ -285,8 +338,14 @@ export default function Home() {
   const [showLog, setShowLog] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [autoMode, setAutoMode] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [muted, setMuted] = useState(false);
   const [remaining, setRemaining] = useState(18);
   const timerRef = useRef(null);
+  const bgmRef = useRef(null);
+  const bgmModeRef = useRef(null);
+  const voiceRef = useRef(null);
+  const endingSfxRef = useRef(null);
 
   const currentScene = sceneMap.get(currentId);
   const dokiLevel = getDokiLevel(affection);
@@ -296,6 +355,61 @@ export default function Home() {
   const timerLimit = useMemo(() => getTimerLimit(dokiLevel), [dokiLevel]);
   const progressLabel = ending ? "0:21 / 0:21" : `0:${String(Math.min(history.length * 2 + 3, 21)).padStart(2, "0")} / 0:21`;
   const showCharacter = currentId !== "opening" || Boolean(responseScene) || Boolean(ending);
+
+  const playSfx = useCallback(
+    (key, volume = 0.72) => {
+      if (!audioEnabled || muted) return;
+      const src = sfxAssets[key];
+      if (!src) return;
+      const audio = new Audio(assetPath(src));
+      audio.volume = volume;
+      audio.play().catch(() => {});
+    },
+    [audioEnabled, muted]
+  );
+
+  const playVoice = useCallback(
+    (voiceId) => {
+      if (!audioEnabled || muted || !voiceId) return;
+      if (voiceRef.current) {
+        voiceRef.current.pause();
+        voiceRef.current.currentTime = 0;
+      }
+      const audio = new Audio(assetPath(voicePath(voiceId)));
+      audio.volume = 0.92;
+      voiceRef.current = audio;
+      audio.play().catch(() => {});
+    },
+    [audioEnabled, muted]
+  );
+
+  const playBgm = useCallback(
+    (mode) => {
+      if (!audioEnabled || muted) return;
+      if (bgmModeRef.current === mode && bgmRef.current) {
+        bgmRef.current.play().catch(() => {});
+        return;
+      }
+
+      if (bgmRef.current) {
+        bgmRef.current.pause();
+        bgmRef.current.currentTime = 0;
+      }
+
+      const audio = new Audio(assetPath(bgmAssets[mode]));
+      audio.loop = true;
+      audio.volume = mode === "sad" ? 0.28 : 0.24;
+      bgmRef.current = audio;
+      bgmModeRef.current = mode;
+      audio.play().catch(() => {});
+    },
+    [audioEnabled, muted]
+  );
+
+  const enableAudio = useCallback(() => {
+    setAudioEnabled(true);
+    setMuted(false);
+  }, []);
 
   const pushHistory = useCallback((speaker, text) => {
     setHistory((items) => [...items, { speaker, text }].slice(-40));
@@ -326,6 +440,7 @@ export default function Home() {
 
   const advance = useCallback(() => {
     if (showLog || showMenu || hasChoices || ending) return;
+    playSfx("uiClick", 0.42);
     if (responseScene) {
       const nextId = responseScene.nextId;
       setResponseScene(null);
@@ -351,7 +466,7 @@ export default function Home() {
 
     goToScene(currentScene.next);
     setLastFeedback(null);
-  }, [currentScene, endGame, ending, goToScene, hasChoices, pushHistory, responseScene, showLog, showMenu]);
+  }, [currentScene, endGame, ending, goToScene, hasChoices, playSfx, pushHistory, responseScene, showLog, showMenu]);
 
   const choose = useCallback(
     (choice, index) => {
@@ -365,6 +480,15 @@ export default function Home() {
         text: choice.response
       };
 
+      playSfx("choiceSelect", 0.58);
+      window.setTimeout(() => playSfx(choice.delta >= 0 ? "affectionUp" : "affectionDown", 0.66), 120);
+      if (choice.delta >= 18) {
+        window.setTimeout(() => playSfx("maleHappy", 0.68), 320);
+      }
+      if (choice.severe || choice.delta <= -20) {
+        window.setTimeout(() => playSfx("maleDespair", 0.74), 320);
+      }
+
       pushHistory(currentScene.speaker, currentScene.text);
       pushHistory("私", choice.label);
       pushHistory("チー牛くん", choice.response);
@@ -376,6 +500,7 @@ export default function Home() {
       setResponseScene({
         speaker: "チー牛くん",
         expression: choice.mood,
+        voice: choice.voice,
         text: choice.response,
         nextId: currentScene.next,
         affectionAfter: newAffection,
@@ -387,7 +512,7 @@ export default function Home() {
               : null
       });
     },
-    [affection, currentScene, ending, hasChoices, pushHistory, severeMistakes, timeouts]
+    [affection, currentScene, ending, hasChoices, playSfx, pushHistory, severeMistakes, timeouts]
   );
 
   const restart = useCallback(() => {
@@ -404,7 +529,9 @@ export default function Home() {
     setShowMenu(false);
     setAutoMode(false);
     setRemaining(18);
-  }, []);
+    endingSfxRef.current = null;
+    playSfx("uiClick", 0.42);
+  }, [playSfx]);
 
   useEffect(() => {
     if (!hasChoices || ending || showLog || showMenu) {
@@ -421,11 +548,13 @@ export default function Home() {
           setLastFeedback({ index: 0, delta: -16, text: "沈黙が続いて、気まずさだけが残った。" });
           setAffection(nextAffection);
           setExpression("sad");
+          playSfx("timeout", 0.7);
           pushHistory("私", "……。");
           pushHistory("チー牛くん", "ご、ごめん。困らせたよね。");
           setResponseScene({
             speaker: "チー牛くん",
             expression: "sad",
+            voice: "timeout",
             text: "ご、ごめん。困らせたよね。",
             nextId: currentScene.next,
             affectionAfter: nextAffection,
@@ -443,13 +572,47 @@ export default function Home() {
     }, 1000);
 
     return () => window.clearInterval(timerRef.current);
-  }, [affection, currentScene, ending, hasChoices, pushHistory, severeMistakes, showLog, showMenu, timerLimit, timeouts]);
+  }, [affection, currentScene, ending, hasChoices, playSfx, pushHistory, severeMistakes, showLog, showMenu, timerLimit, timeouts]);
 
   useEffect(() => {
     if (!autoMode || hasChoices || ending || showLog || showMenu) return;
     const autoTimer = window.setTimeout(advance, 1650);
     return () => window.clearTimeout(autoTimer);
   }, [advance, autoMode, ending, hasChoices, showLog, showMenu]);
+
+  useEffect(() => {
+    const mode = ending === "bad" || expression === "sad" || expression === "angry" ? "sad" : "normal";
+    playBgm(mode);
+  }, [ending, expression, playBgm]);
+
+  useEffect(() => {
+    playVoice(visibleScene?.voice);
+  }, [playVoice, visibleScene?.voice]);
+
+  useEffect(() => {
+    if (!ending || endingSfxRef.current === ending) return;
+    endingSfxRef.current = ending;
+    if (ending === "good") {
+      playSfx("successSting", 0.7);
+      window.setTimeout(() => playSfx("maleHappy", 0.72), 550);
+    } else if (ending === "bad") {
+      playSfx("badSting", 0.74);
+      window.setTimeout(() => playSfx("maleDespair", 0.76), 420);
+    }
+  }, [ending, playSfx]);
+
+  useEffect(() => {
+    if (!muted || !bgmRef.current) return;
+    bgmRef.current.pause();
+  }, [muted]);
+
+  useEffect(() => {
+    return () => {
+      window.clearInterval(timerRef.current);
+      if (bgmRef.current) bgmRef.current.pause();
+      if (voiceRef.current) voiceRef.current.pause();
+    };
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -569,6 +732,12 @@ export default function Home() {
           <b>{progressLabel}</b>
         </div>
 
+        {!audioEnabled ? (
+          <div className="audio-gate">
+            <button type="button" onClick={enableAudio}>はじめる</button>
+          </div>
+        ) : null}
+
         {showLog ? (
           <Overlay title="LOG" onClose={() => setShowLog(false)}>
             {history.length ? (
@@ -590,6 +759,7 @@ export default function Home() {
           <Overlay title="MENU" onClose={() => setShowMenu(false)}>
             <div className="menu-actions">
               <button type="button" onClick={restart}>最初から</button>
+              <button type="button" onClick={() => setMuted((value) => !value)}>{muted ? "音を出す" : "音を切る"}</button>
               <button type="button" onClick={() => setShowMenu(false)}>ゲームに戻る</button>
             </div>
             <p>Space / Enterで会話送り、1-4で選択、Lでログ、Aでオート切り替え。</p>

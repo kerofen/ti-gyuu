@@ -65,6 +65,8 @@
 - UI assets: heart icon, numbered diamonds, HUD panels, dialog frame, control icons.
 - Optional later assets: generated bitmap backgrounds, generated character sprites, click/choice sound effects, BGM.
 - Prompt logs for any generated images under `.prompts/`.
+- ElevenLabs voice assets: female narration/player lines, male Chi-gyu dialogue, branch responses, ending lines, happy/despair reaction clips.
+- Audio assets: user-provided normal/sad BGM, UI click, choice select, affection up/down, timeout, success, and bad ending stings.
 
 ## Technical Stack
 - Framework: Next.js App Router.
@@ -72,6 +74,7 @@
 - Styling: Global CSS with responsive 16:9 stage and CSS/SVG-style visual assets.
 - State: Local React state for scenario, affection, mistakes, timer, log, auto mode.
 - Backend: None for first prototype.
+- Audio: static MP3 playback in browser; ElevenLabs generation is run locally through `scripts/generate-elevenlabs-audio.mjs` so API keys are not exposed client-side.
 - Verification: `npm run lint`, `npm run build`, local `npm run dev`, browser smoke test with Playwright.
 
 ## Implementation Order
