@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint app --max-warnings=0"
+    "lint": "eslint app --max-warnings=0",
+    "audio:routes": "node scripts/generate-route-elevenlabs-audio.mjs"
   },
   "dependencies": {
     "next": "16.2.4",

@@ -779,14 +779,37 @@ function getRouteChoiceBonus(route, sceneId, choiceIndex) {
   return route.choiceBias?.[sceneId]?.[choiceIndex] ?? 0;
 }
 
+function routeVoiceId(routeId, sceneId) {
+  if (!routeStoryOverrides[routeId]?.[sceneId]) return null;
+  return `route-${routeId}-${sceneId.replace(/_/g, "-")}`;
+}
+
+function routeChoiceVoiceId(routeId, sceneId, choiceIndex) {
+  if (!routeStoryOverrides[routeId]?.[sceneId]?.choices?.[choiceIndex]) return null;
+  return `route-${routeId}-${sceneId.replace(/_/g, "-")}-response-${choiceIndex + 1}`;
+}
+
+function routeEndingVoiceId(routeId, type) {
+  if (!routeEndingOverrides[routeId]?.[type]) return null;
+  return `route-${routeId}-ending-${type}`;
+}
+
 function getRouteScene(routeId, sceneId) {
   const scene = sceneMap.get(sceneId);
   const override = routeStoryOverrides[routeId]?.[sceneId];
   if (!scene || !override) return scene;
+  const choices = override.choices
+    ? override.choices.map((choice, index) => ({
+        ...choice,
+        voice: choice.voice ?? routeChoiceVoiceId(routeId, sceneId, index)
+      }))
+    : scene.choices;
+
   return {
     ...scene,
     ...override,
-    choices: override.choices ?? scene.choices
+    voice: override.voice ?? routeVoiceId(routeId, sceneId),
+    choices
   };
 }
 
@@ -818,9 +841,12 @@ function endingScene(type, routeId = DEFAULT_ROUTE_ID) {
     };
   }
 
+  const override = routeEndingOverrides[routeId]?.[type];
+
   return {
     ...scene,
-    ...routeEndingOverrides[routeId]?.[type]
+    ...override,
+    voice: override?.voice ?? routeEndingVoiceId(routeId, type) ?? scene.voice
   };
 }
 
