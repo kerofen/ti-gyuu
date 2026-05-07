@@ -54,6 +54,10 @@
 ## Screen Layout
 - Title Screen: 3人の候補が見えるキービジュアル、ゲームタイトル、開始ボタン。
 - Route Select: 3枚の攻略カード。名前、性格、会話の入り口、攻略ヒントを表示する。
+- Route Personalities:
+  - チー牛くん: 王道チーズ牛丼派。素直におすすめを聞くと距離が縮まる標準ルート。
+  - 考察系チー牛くん: ロジカル考察派。値段、限定、組み合わせにうるさく、自分だけの理論がピタッとハマる返答を好む難しいルート。ズレた返答には早口で論破気味に返す。
+  - チー牛チーマシくん: 追いチーズ豪快派。牛丼をチーズで埋め尽くし、混ぜて、最後にさらにチーズをかける熱量に乗るルート。
 - 16:9のゲームステージを中央に表示。
 - Background: 架空の牛丼店内。カウンター、メニュー札、オレンジ看板を含む実写デモ風の背景。
 - Character layer: チー牛くんの半身立ち絵。通常、困惑、照れ、落胆、怒りの表情差分。
@@ -66,7 +70,7 @@
 
 ## Required Assets
 - Title key visual for the opening screen.
-- Three route-select portrait cards: classic nervous route, analytical menu researcher route, quiet late-night route.
+- Three route-select portrait cards: classic nervous route, logical analysis route, extra-cheese route.
 - Original gyudon-shop background asset, SVG/CSS based for prototype.
 - Original character portrait asset with expression variants, SVG/CSS based for prototype.
 - UI assets: heart icon, numbered diamonds, HUD panels, dialog frame, control icons.

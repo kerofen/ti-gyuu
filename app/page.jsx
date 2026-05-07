@@ -263,39 +263,462 @@ const routes = [
   },
   {
     id: "analyst",
-    name: "計算くん",
-    routeTitle: "メニュー研究派",
-    catchCopy: "値段、限定、組み合わせ。牛丼店のメニューに物語を見るタイプ。",
-    curiosity: "メニュー考察に乗るほど、隠れた照れが出る。",
-    difficulty: "会話重視",
+    name: "考察系チー牛くん",
+    routeTitle: "ロジカル考察派",
+    catchCopy: "値段、限定、組み合わせ。自分だけの牛丼理論を持っている。",
+    curiosity: "理屈がピタッとハマる返答で喜ぶ。ズレると早口で論破してくる。",
+    difficulty: "難しい",
     startAffection: 10,
     cardImage: "/assets/routes/route-analyst.png",
     choiceBias: {
-      choice_food: { 1: 3 },
-      choice_hobby: { 0: 7, 1: 5 },
-      choice_memory: { 1: 3 },
-      choice_final: { 1: 4 }
+      choice_food: { 0: 7 },
+      choice_hobby: { 0: 8 },
+      choice_anxiety: { 1: 5 },
+      choice_memory: { 0: 6 },
+      choice_final: { 0: 7 }
     }
   },
   {
     id: "night",
-    name: "深夜くん",
-    routeTitle: "深夜イヤホン派",
-    catchCopy: "夜の窓際で、聞こえないふりをしながら本音を待っている。",
-    curiosity: "急かさず、不安に寄り添う返答が効きやすい。",
-    difficulty: "繊細",
+    name: "チー牛チーマシくん",
+    routeTitle: "追いチーズ豪快派",
+    catchCopy: "牛丼をチーズで埋め尽くし、混ぜて、最後にもう一度かけたい。",
+    curiosity: "チーズ増しの熱量に乗るほどテンションが上がる。",
+    difficulty: "豪快",
     startAffection: 14,
     cardImage: "/assets/routes/route-night.png",
     choiceBias: {
-      choice_anxiety: { 1: 6, 2: 4 },
-      choice_memory: { 2: 5 },
-      choice_final: { 1: 3, 2: 2 }
+      choice_food: { 0: 6, 1: 5 },
+      choice_hobby: { 0: 7 },
+      choice_anxiety: { 0: 5 },
+      choice_memory: { 0: 6 },
+      choice_final: { 0: 8 }
     }
   }
 ];
 
 const routeMap = new Map(routes.map((route) => [route.id, route]));
 const DEFAULT_ROUTE_ID = routes[0].id;
+
+const routeStoryOverrides = {
+  analyst: {
+    opening: {
+      voice: null,
+      text: "5月24日、土曜日。秋葉原の牛丼店で、私はやけに書き込みの多いメニュー表を見つけた。"
+    },
+    meet: {
+      voice: null,
+      text: "す、すみません。いまの限定チーズ牛丼、価格と満足度の期待値がかなり歪んでて……少しだけ考察、聞いてもらえますか。"
+    },
+    choice_food: {
+      voice: null,
+      text: "チーズ牛丼は感情論じゃなくて、価格、満腹度、再現性の三点で評価すべきなんです。あなたはどう見ます？",
+      choices: [
+        {
+          label: "価格と満足度の交点がチーズなんだね",
+          delta: 17,
+          mood: "blush",
+          voice: null,
+          response: "そ、それです！ 交点という言い方、かなり解像度が高い。今の返答は理論値に近いです。"
+        },
+        {
+          label: "限定なら希少性も評価に入るよね",
+          delta: 13,
+          mood: "shy",
+          voice: null,
+          response: "希少性……そこに気づきますか。期間限定は味だけじゃなく、体験コストも乗るんです。"
+        },
+        {
+          label: "おいしければ何でもよくない？",
+          delta: -16,
+          mood: "angry",
+          voice: null,
+          response: "いや、それは論点が粗いです。おいしいの内訳を分解しないと、再注文の精度が落ちます。"
+        },
+        {
+          label: "普通の牛丼で十分だと思う",
+          delta: -24,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "十分、という言葉は危険です。比較対象も条件も置かずに結論だけ出すのは、雑すぎます。"
+        }
+      ]
+    },
+    after_food: {
+      voice: null,
+      text: "彼のノートには、値段、満腹感、限定性、チーズの伸びまで細かく記録されていた。"
+    },
+    choice_hobby: {
+      voice: null,
+      text: "注文の順番にも最適解があります。券売機、席、提供時間、溶け具合……全部つながってるんです。",
+      choices: [
+        {
+          label: "提供時間まで含めて一つの式なんだ",
+          delta: 18,
+          mood: "blush",
+          voice: null,
+          response: "式！ まさに式です。食べる前から勝負は始まっている、という話がやっと通じた。"
+        },
+        {
+          label: "今のおすすめ構成を教えて",
+          delta: 12,
+          mood: "shy",
+          voice: null,
+          response: "今日はチーズ、ねぎ、温玉。塩味と油分の補正がきれいに噛み合います。"
+        },
+        {
+          label: "考えすぎると疲れない？",
+          delta: -12,
+          mood: "sad",
+          voice: null,
+          response: "疲れるかどうかではなく、納得できるかです。そこを混同すると会話が崩れます。"
+        },
+        {
+          label: "早く決めないと迷惑だよ",
+          delta: -22,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "決めています。むしろ根拠なく急ぐほうが、後続の満足度を毀損します。"
+        }
+      ]
+    },
+    choice_anxiety: {
+      voice: null,
+      text: "……でも、こういう話をすると大体引かれます。説明が長いって言われるし、早口だって。",
+      choices: [
+        {
+          label: "早口でも中身があるから聞きたい",
+          delta: 14,
+          mood: "shy",
+          voice: null,
+          response: "中身……そこを見てくれるなら、話す速度は少し落とせます。たぶん。"
+        },
+        {
+          label: "結論から言って、理由をあとで聞かせて",
+          delta: 18,
+          mood: "blush",
+          voice: null,
+          response: "結論ファースト。いい整理です。あなた、会話設計がうまいですね。"
+        },
+        {
+          label: "うん、ちょっと難しいかも",
+          delta: -10,
+          mood: "sad",
+          voice: null,
+          response: "難しい、で止めると改善点が不明です。どの変数が重かったですか。"
+        },
+        {
+          label: "論破しようとしてるみたい",
+          delta: -20,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "論破ではなく検証です。そこを同一視されると、こちらも訂正せざるを得ません。"
+        }
+      ]
+    },
+    midpoint: {
+      voice: null,
+      text: "早口の奥にあるのは、勝ちたい気持ちではなく、自分の考えを一度でいいから正確に受け取ってほしい願いだった。"
+    },
+    choice_memory: {
+      voice: null,
+      text: "この表、実は誰かに見せたくて作りました。自分だけの理論が、ただの変なこだわりじゃないって確かめたくて。",
+      choices: [
+        {
+          label: "その理論、二人で検証しよう",
+          delta: 19,
+          mood: "blush",
+          voice: null,
+          response: "二人で……サンプル数が増える。いや、それ以上に、少し嬉しいです。"
+        },
+        {
+          label: "こだわりが見える表って面白い",
+          delta: 14,
+          mood: "shy",
+          voice: null,
+          response: "面白い、ですか。変じゃなくて、面白い。かなり大きな差があります。"
+        },
+        {
+          label: "もっと短くまとめたら伝わりそう",
+          delta: 5,
+          mood: "neutral",
+          voice: null,
+          response: "要約版……必要ですね。情報量を落とさずに圧縮する方法を考えます。"
+        },
+        {
+          label: "結局、自慢したいだけ？",
+          delta: -26,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "違います。自慢なら、こんなに不安そうに確認しません。前提が間違っています。"
+        }
+      ]
+    },
+    choice_final: {
+      voice: null,
+      text: "次に会うなら、二人用の最適解を組んでもいいですか。あなたの好みも変数に入れたい。",
+      choices: [
+        {
+          label: "私の好み込みで最適解を作って",
+          delta: 24,
+          mood: "blush",
+          voice: null,
+          response: "了解です。単独最適じゃなく、二人の最適解。これはかなり強いテーマです。"
+        },
+        {
+          label: "次は私もノート持ってくるね",
+          delta: 17,
+          mood: "blush",
+          voice: null,
+          response: "ノート……本気ですね。では比較表の項目から一緒に決めましょう。"
+        },
+        {
+          label: "ほどほどにね",
+          delta: -7,
+          mood: "sad",
+          voice: null,
+          response: "ほどほど、は曖昧ですが……たぶん配慮の言葉ですよね。受け取ります。"
+        },
+        {
+          label: "理屈っぽい人は苦手かも",
+          delta: -30,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "そうですか。では、この会話の継続条件は満たせません。帰ります。"
+        }
+      ]
+    }
+  },
+  night: {
+    opening: {
+      voice: null,
+      text: "5月24日、土曜日。秋葉原の牛丼店で、私は山のようなチーズ追加券を握る青年を見かけた。"
+    },
+    meet: {
+      voice: null,
+      text: "なあ……チーズ、増せるだけ増す派？ 俺、牛丼がチーズで見えなくなる瞬間が一番好きなんだ。"
+    },
+    choice_food: {
+      voice: null,
+      text: "牛丼をチーズで埋め尽くして、ぐちゃっと混ぜて、最後に追いチーズ。これ、わかる？",
+      choices: [
+        {
+          label: "ごはんが見えないくらい増そう",
+          delta: 20,
+          mood: "blush",
+          voice: null,
+          response: "それ！ 白い雪原みたいにしてから掘るんだよ。今ので完全に伝わった。"
+        },
+        {
+          label: "混ぜてから追いチーズ、強いね",
+          delta: 18,
+          mood: "blush",
+          voice: null,
+          response: "強い。追いチーズは締めじゃない、第二開幕なんだ。わかってるな。"
+        },
+        {
+          label: "少しだけでよくない？",
+          delta: -16,
+          mood: "sad",
+          voice: null,
+          response: "少しだけ……それだと牛丼がまだ牛丼の顔をしてる。俺は埋めたいんだ。"
+        },
+        {
+          label: "チーズ抜きの方がさっぱりしてる",
+          delta: -30,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "抜く？ チーズを？ それはもう俺の席で言っちゃいけないやつだ。"
+        }
+      ]
+    },
+    after_food: {
+      voice: null,
+      text: "彼は追加券を扇のように並べ、どのタイミングでチーズを重ねるか真剣に考えている。"
+    },
+    choice_hobby: {
+      voice: null,
+      text: "理想は、まず全面チーズ、次に混ぜる、肉汁を吸わせる、最後にもう一回かける。豪快だけど繊細なんだ。",
+      choices: [
+        {
+          label: "層にするから味が変わるんだね",
+          delta: 18,
+          mood: "blush",
+          voice: null,
+          response: "そう！ チーズは量だけじゃない、層。最初と最後で表情が変わるんだよ。"
+        },
+        {
+          label: "追いチーズのタイミングが大事そう",
+          delta: 14,
+          mood: "shy",
+          voice: null,
+          response: "大事。熱が残ってるギリギリで落とす。そこが一番伸びる。"
+        },
+        {
+          label: "カロリーすごそう",
+          delta: -8,
+          mood: "sad",
+          voice: null,
+          response: "まあ、すごい。でも今日はカロリーじゃなくて覚悟の話をしてる。"
+        },
+        {
+          label: "混ぜたら見た目が悪くない？",
+          delta: -22,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "見た目で止まるなよ。ごちゃまぜの先にしかない一体感があるんだ。"
+        }
+      ]
+    },
+    choice_anxiety: {
+      voice: null,
+      text: "……引いた？ だよな。チーズで埋めたいとか、普通に言ったら重いよな。",
+      choices: [
+        {
+          label: "重いくらいが楽しそう",
+          delta: 18,
+          mood: "blush",
+          voice: null,
+          response: "重いくらいがいい……その言い方、めちゃくちゃ救われる。"
+        },
+        {
+          label: "好きなものに全力なのいいと思う",
+          delta: 15,
+          mood: "shy",
+          voice: null,
+          response: "全力、か。そう言われると、ただの大盛りじゃなくて済むな。"
+        },
+        {
+          label: "食べ切れる量ならいいんじゃない？",
+          delta: 7,
+          mood: "neutral",
+          voice: null,
+          response: "そこはもちろん。豪快と無責任は違う。最後までいく。"
+        },
+        {
+          label: "ちょっと胃もたれしそう",
+          delta: -20,
+          mood: "sad",
+          severe: true,
+          voice: null,
+          response: "胃もたれ……現実を言われると急に弱い。いや、でも俺は食べたい。"
+        }
+      ]
+    },
+    midpoint: {
+      voice: null,
+      text: "豪快な言葉のわりに、彼は追加券の端をそっと揃えていた。好きなものを笑われたくない手つきだった。"
+    },
+    choice_memory: {
+      voice: null,
+      text: "いつかさ、牛丼をチーズで真っ白にして、混ぜて、最後にまた白くするのを誰かとやりたかったんだ。",
+      choices: [
+        {
+          label: "その儀式、隣で見たい",
+          delta: 19,
+          mood: "blush",
+          voice: null,
+          response: "儀式って言った？ いいな、それ。俺の中の正式名称にする。"
+        },
+        {
+          label: "二人なら限界盛りも楽しそう",
+          delta: 16,
+          mood: "blush",
+          voice: null,
+          response: "二人で限界盛り……字面がもう強い。最高かもしれない。"
+        },
+        {
+          label: "写真だけなら見てみたい",
+          delta: 3,
+          mood: "neutral",
+          voice: null,
+          response: "写真だけか。まあ最初はそこからでもいい。見たらたぶん食べたくなる。"
+        },
+        {
+          label: "一人でやった方がよくない？",
+          delta: -26,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "一人でやれるから、誰かとやりたいって話をしてるんだよ。"
+        }
+      ]
+    },
+    choice_final: {
+      voice: null,
+      text: "次、俺とチーマシ限界盛りしてくれる？ 牛丼が見えなくなるまで、ちゃんと付き合ってほしい。",
+      choices: [
+        {
+          label: "限界まで増して、一緒に混ぜよう",
+          delta: 25,
+          mood: "blush",
+          voice: null,
+          response: "決まりだ。混ぜる瞬間、絶対楽しい。最後の追いチーズは半分ずつな。"
+        },
+        {
+          label: "追いチーズ担当やるね",
+          delta: 18,
+          mood: "blush",
+          voice: null,
+          response: "追いチーズ担当……重要ポジションだぞ。任せたら、たぶん俺かなり喜ぶ。"
+        },
+        {
+          label: "普通盛りからなら",
+          delta: -5,
+          mood: "sad",
+          voice: null,
+          response: "普通盛り……入口としてはありか。そこから増せばいいもんな。"
+        },
+        {
+          label: "私はチーズ少なめでいいかな",
+          delta: -30,
+          mood: "angry",
+          severe: true,
+          voice: null,
+          response: "少なめ……そっか。俺の山には、一緒に登ってくれないんだな。"
+        }
+      ]
+    }
+  }
+};
+
+const routeEndingOverrides = {
+  analyst: {
+    good: {
+      voice: null,
+      text: "君の返答で、仮説が更新されました。次は二人の好みを変数に入れて、最高の組み合わせを作りたいです。"
+    },
+    normal: {
+      voice: null,
+      text: "今日はサンプル数1として、かなり有意義でした。次があれば、もう少し短く、でも正確に話します。"
+    },
+    bad: {
+      voice: null,
+      text: "論点が最後まで噛み合いませんでした。これ以上続けても、互いの期待値が下がるだけです。帰ります。"
+    }
+  },
+  night: {
+    good: {
+      voice: null,
+      text: "次は限界までチーズ増そう。混ぜて、埋めて、最後にもう一回かける。君となら絶対うまい。"
+    },
+    normal: {
+      voice: null,
+      text: "今日はありがとな。いきなり限界盛りは重かったかもだけど、次は一口だけでも付き合ってくれたら嬉しい。"
+    },
+    bad: {
+      voice: null,
+      text: "チーズ少なめって言われると、さすがにきつい。俺、今日は一人で増して帰るわ。"
+    }
+  }
+};
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -356,33 +779,48 @@ function getRouteChoiceBonus(route, sceneId, choiceIndex) {
   return route.choiceBias?.[sceneId]?.[choiceIndex] ?? 0;
 }
 
-function endingScene(type) {
+function getRouteScene(routeId, sceneId) {
+  const scene = sceneMap.get(sceneId);
+  const override = routeStoryOverrides[routeId]?.[sceneId];
+  if (!scene || !override) return scene;
+  return {
+    ...scene,
+    ...override,
+    choices: override.choices ?? scene.choices
+  };
+}
+
+function endingScene(type, routeId = DEFAULT_ROUTE_ID) {
+  let scene;
   if (type === "good") {
-    return {
+    scene = {
       speaker: "チー牛くん",
       expression: "blush",
       title: "成功エンド",
       voice: "ending-good",
       text: "ありがとう。次は、ぼくがちゃんと誘う。君と食べるチーズ牛丼、きっと一番おいしいから。"
     };
-  }
-
-  if (type === "normal") {
-    return {
+  } else if (type === "normal") {
+    scene = {
       speaker: "チー牛くん",
       expression: "neutral",
       title: "通常エンド",
       voice: "ending-normal",
       text: "今日はありがとう。まだ少し緊張するけど、また会えたら……その時は、もう少し話せると思う。"
     };
+  } else {
+    scene = {
+      speaker: "チー牛くん",
+      expression: "angry",
+      title: "失敗エンド",
+      voice: "ending-bad",
+      text: "嘘だ！ 絶対そんなこと思ってない！ もういい、帰る！"
+    };
   }
 
   return {
-    speaker: "チー牛くん",
-    expression: "angry",
-    title: "失敗エンド",
-    voice: "ending-bad",
-    text: "嘘だ！ 絶対そんなこと思ってない！ もういい、帰る！"
+    ...scene,
+    ...routeEndingOverrides[routeId]?.[type]
   };
 }
 
@@ -412,9 +850,9 @@ export default function Home() {
 
   const selectedRoute = routeMap.get(selectedRouteId) ?? routes[0];
   const selectedRouteName = selectedRoute.name;
-  const currentScene = sceneMap.get(currentId);
+  const currentScene = useMemo(() => getRouteScene(selectedRouteId, currentId), [currentId, selectedRouteId]);
   const dokiLevel = getDokiLevel(affection);
-  const activeEnding = ending ? endingScene(ending) : null;
+  const activeEnding = useMemo(() => (ending ? endingScene(ending, selectedRouteId) : null), [ending, selectedRouteId]);
   const visibleScene = activeEnding ?? responseScene ?? currentScene;
   const hasChoices = Boolean(screen === "game" && !ending && !responseScene && currentScene?.choices?.length);
   const timerLimit = useMemo(() => getTimerLimit(dokiLevel), [dokiLevel]);
@@ -437,11 +875,11 @@ export default function Home() {
 
   const playVoice = useCallback(
     (voiceId) => {
-      if (!audioEnabled || muted || !voiceId) return;
       if (voiceRef.current) {
         voiceRef.current.pause();
         voiceRef.current.currentTime = 0;
       }
+      if (!audioEnabled || muted || !voiceId) return;
       const audio = new Audio(assetPath(voicePath(voiceId)));
       audio.volume = 0.92;
       voiceRef.current = audio;
@@ -528,20 +966,20 @@ export default function Home() {
   const goToScene = useCallback(
     (nextId, score = affection) => {
       setCurrentId(nextId);
-      const nextScene = sceneMap.get(nextId);
+      const nextScene = getRouteScene(selectedRouteId, nextId);
       if (nextScene?.expression) setExpression(nextScene.expression);
       if (nextScene?.choices?.length) {
         setRemaining(getTimerLimit(getDokiLevel(score)));
       }
     },
-    [affection]
+    [affection, selectedRouteId]
   );
 
   const endGame = useCallback(
     (forcedType) => {
       const activeRoute = routeMap.get(selectedRouteId) ?? routes[0];
       const result = forcedType ?? getEnding(affection, severeMistakes, timeouts);
-      const scene = endingScene(result);
+      const scene = endingScene(result, selectedRouteId);
       setEnding(result);
       setExpression(scene.expression);
       pushHistory(routeSpeaker(scene.speaker, activeRoute), scene.text);
