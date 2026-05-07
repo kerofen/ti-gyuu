@@ -269,6 +269,21 @@ const routeCharacterAssets = {
   }
 };
 
+const endingImageAssets = {
+  classic: {
+    good: "/assets/endings/classic-good.png",
+    bad: "/assets/endings/classic-bad.png"
+  },
+  analyst: {
+    good: "/assets/endings/analyst-good.png",
+    bad: "/assets/endings/analyst-bad.png"
+  },
+  night: {
+    good: "/assets/endings/night-good.png",
+    bad: "/assets/endings/night-bad.png"
+  }
+};
+
 const routes = [
   {
     id: "classic",
@@ -874,6 +889,7 @@ function endingScene(type, routeId = DEFAULT_ROUTE_ID) {
   return {
     ...scene,
     ...override,
+    image: endingImageAssets[routeId]?.[type] ?? null,
     voice: override?.voice ?? routeEndingVoiceId(routeId, type) ?? scene.voice
   };
 }
@@ -911,7 +927,8 @@ export default function Home() {
   const hasChoices = Boolean(screen === "game" && !ending && !responseScene && currentScene?.choices?.length);
   const timerLimit = useMemo(() => getTimerLimit(dokiLevel), [dokiLevel]);
   const progressLabel = ending ? "0:21 / 0:21" : `0:${String(Math.min(history.length * 2 + 3, 21)).padStart(2, "0")} / 0:21`;
-  const showCharacter = screen === "game";
+  const endingImageSource = activeEnding?.image ?? null;
+  const showCharacter = screen === "game" && !endingImageSource;
   const visibleSpeaker = routeSpeaker(visibleScene?.speaker, selectedRoute);
   const characterSource = getCharacterSource(selectedRoute.id, expression);
 
@@ -1277,6 +1294,20 @@ export default function Home() {
 
         {screen === "game" ? (
           <>
+        {endingImageSource ? (
+          <div className={`ending-cg ending-cg-${ending}`} aria-hidden="true">
+            <Image
+              className="ending-cg-image"
+              src={assetPath(endingImageSource)}
+              alt=""
+              fill
+              priority
+              unoptimized
+              sizes="100vw"
+            />
+          </div>
+        ) : null}
+
         {showCharacter ? (
           <div className={`character character-${expression} route-portrait-character route-${selectedRoute.id}`} aria-hidden="true">
             <Image
@@ -1292,7 +1323,7 @@ export default function Home() {
         ) : null}
 
         <div className="date-panel">
-          <span>牛丼家 秋葉原店</span>
+          <span>吉乃屋 秋葉原店</span>
           <hr />
           <strong>5/24（土）</strong>
           <b>18:{ending ? "59" : String(40 + Math.min(history.length, 19)).padStart(2, "0")}</b>

@@ -59,8 +59,8 @@
   - 考察系チー牛くん: ロジカル考察派。値段、限定、組み合わせにうるさく、自分だけの理論がピタッとハマる返答を好む難しいルート。ズレた返答には早口で論破気味に返す。
   - チー牛チーマシくん: 追いチーズ豪快派。牛丼をチーズで埋め尽くし、混ぜて、最後にさらにチーズをかける熱量に乗るルート。
 - 16:9のゲームステージを中央に表示。
-- Background: 架空の牛丼店内。カウンター、メニュー札、オレンジ看板を含む実写デモ風の背景。
-- Character layer: チー牛くんの半身立ち絵。通常、困惑、照れ、落胆、怒りの表情差分。
+- Background: 架空の牛丼店「吉乃屋」の店内。カウンター、全て日本語表記のメニュー札、オレンジ看板を含む実写デモ風の背景。
+- Character layer: チー牛くんの単体生成立ち絵。通常、困惑、照れ、落胆、怒りの表情差分。表情シート由来の重なりを避けるため、単体画像を透明化して使用する。
 - Top-left HUD: 店舗名、日付、天気、時刻。
 - Top-right HUD: ハートアイコン、親密度%、ゲージ、ドキドキLv。
 - Bottom dialog: 話者名ラベル、本文、ハート装飾、クリック待ち演出。
@@ -72,10 +72,10 @@
 - Title key visual for the opening screen.
 - Three route-select portrait cards: classic nervous route, logical analysis route, extra-cheese route.
 - Route-specific transparent character portraits for neutral, shy, blush, sad, and angry expressions.
-- Original gyudon-shop background asset, SVG/CSS based for prototype.
-- Original character portrait asset with expression variants, SVG/CSS based for prototype.
+- Original gyudon-shop background asset: fictional Japanese-only `吉乃屋` interior with matching atmosphere across title, route select, and gameplay.
+- Route-specific ending CG stills: success and failure are flattened one-picture images, not separate background/character layers.
 - UI assets: heart icon, numbered diamonds, HUD panels, dialog frame, control icons.
-- Optional later assets: generated bitmap backgrounds, generated character sprites, click/choice sound effects, BGM.
+- Optional later assets: additional date/location backgrounds, seasonal CGs, click/choice sound effects, BGM.
 - Prompt logs for any generated images under `.prompts/`.
 - ElevenLabs voice assets: female narration/player lines, male Chi-gyu dialogue, branch responses, ending lines, happy/despair reaction clips.
 - Audio assets: user-provided normal/sad BGM, UI click, choice select, affection up/down, timeout, success, and bad ending stings.
