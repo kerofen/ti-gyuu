@@ -245,6 +245,30 @@ const characterAssets = {
   blush: "/assets/characters/chi-gyu-blush.png"
 };
 
+const routeCharacterAssets = {
+  classic: {
+    neutral: "/assets/characters/classic-neutral.png",
+    shy: "/assets/characters/classic-shy.png",
+    sad: "/assets/characters/classic-sad.png",
+    angry: "/assets/characters/classic-angry.png",
+    blush: "/assets/characters/classic-blush.png"
+  },
+  analyst: {
+    neutral: "/assets/characters/analyst-neutral.png",
+    shy: "/assets/characters/analyst-shy.png",
+    sad: "/assets/characters/analyst-sad.png",
+    angry: "/assets/characters/analyst-angry.png",
+    blush: "/assets/characters/analyst-blush.png"
+  },
+  night: {
+    neutral: "/assets/characters/night-neutral.png",
+    shy: "/assets/characters/night-shy.png",
+    sad: "/assets/characters/night-sad.png",
+    angry: "/assets/characters/night-angry.png",
+    blush: "/assets/characters/night-blush.png"
+  }
+};
+
 const routes = [
   {
     id: "classic",
@@ -779,6 +803,10 @@ function getRouteChoiceBonus(route, sceneId, choiceIndex) {
   return route.choiceBias?.[sceneId]?.[choiceIndex] ?? 0;
 }
 
+function getCharacterSource(routeId, expression) {
+  return routeCharacterAssets[routeId]?.[expression] ?? characterAssets[expression] ?? characterAssets.neutral;
+}
+
 function routeVoiceId(routeId, sceneId) {
   if (!routeStoryOverrides[routeId]?.[sceneId]) return null;
   return `route-${routeId}-${sceneId.replace(/_/g, "-")}`;
@@ -885,7 +913,7 @@ export default function Home() {
   const progressLabel = ending ? "0:21 / 0:21" : `0:${String(Math.min(history.length * 2 + 3, 21)).padStart(2, "0")} / 0:21`;
   const showCharacter = screen === "game";
   const visibleSpeaker = routeSpeaker(visibleScene?.speaker, selectedRoute);
-  const characterSource = selectedRoute.cardImage ?? characterAssets[expression] ?? characterAssets.neutral;
+  const characterSource = getCharacterSource(selectedRoute.id, expression);
 
   const playSfx = useCallback(
     (key, volume = 0.72) => {
@@ -1293,7 +1321,6 @@ export default function Home() {
             {lastFeedback.index ? `選択 ${lastFeedback.index}` : "時間切れ"} / 親密度
             {lastFeedback.delta >= 0 ? "+" : ""}
             {lastFeedback.delta}
-            {lastFeedback.routeBonus > 0 ? ` / 相性+${lastFeedback.routeBonus}` : ""}
           </div>
         ) : null}
 
@@ -1311,21 +1338,17 @@ export default function Home() {
             <div className="choice-timer">
               <i style={{ width: timerPercent }} />
             </div>
-            {currentScene.choices.map((choice, index) => {
-              const routeBonus = getRouteChoiceBonus(selectedRoute, currentScene.id, index);
-              return (
-                <button
-                  className={`choice choice-${index + 1} ${routeBonus > 0 ? "choice-affinity" : ""}`}
-                  key={choice.label}
-                  type="button"
-                  onClick={() => choose(choice, index)}
-                >
-                  <span className={`choice-number n${index + 1}`} data-number={index + 1} />
-                  <span>{choice.label}</span>
-                  {routeBonus > 0 ? <small>相性 +{routeBonus}</small> : null}
-                </button>
-              );
-            })}
+            {currentScene.choices.map((choice, index) => (
+              <button
+                className={`choice choice-${index + 1}`}
+                key={choice.label}
+                type="button"
+                onClick={() => choose(choice, index)}
+              >
+                <span className={`choice-number n${index + 1}`} data-number={index + 1} />
+                <span>{choice.label}</span>
+              </button>
+            ))}
           </div>
         ) : null}
 
@@ -1395,9 +1418,9 @@ function TitleScreen({ onStart }) {
         sizes="100vw"
       />
       <div className="title-copy">
-        <span className="title-kicker">5分で終わる牛丼店恋愛シミュレーション</span>
-        <h1>チー牛くん恋愛研究所</h1>
-        <p>どの席に座るかで、会話の温度が少し変わる。</p>
+        <span className="title-kicker">5分で終わる牛丼恋愛シミュレーション</span>
+        <h1>チー牛くんと、恋をする。</h1>
+        <p>その一杯に、恋はあるのか。</p>
         <button type="button" onClick={onStart}>ゲームスタート</button>
       </div>
     </div>

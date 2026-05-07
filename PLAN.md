@@ -71,6 +71,7 @@
 ## Required Assets
 - Title key visual for the opening screen.
 - Three route-select portrait cards: classic nervous route, logical analysis route, extra-cheese route.
+- Route-specific transparent character portraits for neutral, shy, blush, sad, and angry expressions.
 - Original gyudon-shop background asset, SVG/CSS based for prototype.
 - Original character portrait asset with expression variants, SVG/CSS based for prototype.
 - UI assets: heart icon, numbered diamonds, HUD panels, dialog frame, control icons.

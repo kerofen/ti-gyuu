@@ -1004,10 +1004,10 @@ button {
 
 .title-copy {
   position: absolute;
-  left: 5%;
+  left: 4%;
   bottom: 8%;
   z-index: 2;
-  width: min(560px, 46%);
+  width: min(860px, 80%);
   display: grid;
   gap: 14px;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.72);
@@ -1028,9 +1028,12 @@ button {
 .title-copy h1 {
   margin: 0;
   color: #fff;
-  font-size: clamp(42px, 5.1vw, 78px);
+  width: max-content;
+  max-width: 100%;
+  font-size: clamp(36px, 4.5vw, 66px);
   line-height: 1.02;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .title-copy p {
@@ -1209,53 +1212,29 @@ button {
 }
 
 .route-portrait-character {
-  left: 51.5%;
-  top: 9%;
-  width: 31%;
-  height: 64%;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 8px;
-  background: rgba(18, 16, 15, 0.22);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 18px 28px rgba(0, 0, 0, 0.24);
+  left: 51%;
+  top: 5%;
+  width: 36%;
+  height: 75%;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .route-portrait-character .character-image {
-  object-fit: cover;
-  object-position: center top;
+  object-fit: contain;
+  object-position: center bottom;
 }
 
 .route-portrait-character.character-blush::after,
 .route-portrait-character.character-shy::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 45%, rgba(255, 114, 162, 0.12));
-  pointer-events: none;
+  content: none;
 }
 
 .route-portrait-character.character-sad .character-image {
-  filter: saturate(0.78) brightness(0.86);
-}
-
-.choice-affinity {
-  padding-right: 92px;
-  border-color: rgba(255, 143, 186, 0.68);
-  box-shadow:
-    inset 0 0 0 2px rgba(255, 122, 170, 0.24),
-    0 5px 14px rgba(0, 0, 0, 0.22);
-}
-
-.choice small {
-  position: absolute;
-  right: 16px;
-  bottom: 4px;
-  color: #ffd8e7;
-  font-size: 11px;
-  line-height: 1;
-  text-shadow: 0 2px rgba(0, 0, 0, 0.6);
+  filter: none;
 }
 
 .overlay-panel {
@@ -1826,7 +1805,7 @@ button {
   }
 
   .title-copy h1 {
-    font-size: clamp(36px, 12vw, 56px);
+    font-size: clamp(26px, 8.8vw, 42px);
   }
 
   .title-copy p {
@@ -1890,18 +1869,8 @@ button {
 
   .route-portrait-character {
     left: 50%;
-    top: 11%;
-    width: 52%;
-    height: 48%;
-  }
-
-  .choice small {
-    right: 12px;
-    bottom: 3px;
-    font-size: 10px;
-  }
-
-  .choice-affinity {
-    padding-right: 76px;
+    top: 9%;
+    width: 58%;
+    height: 54%;
   }
 }
